@@ -15,10 +15,10 @@ from pyparsing import *
 # http://www.zer0.org/procmail/quickref.html
 
 # Unicode printables minus spaces
-unicodePrintables = u''.join(unichr(c) for c in xrange(65536) if not unichr(c).isspace())
+unicodePrintables = ''.join(chr(c) for c in range(65536) if not chr(c).isspace())
 # Unicodes spaces minus carriage returnand line break
-unicodeSpaces = u''.join(
-    unichr(c) for c in xrange(65536) if unichr(c).isspace() and unichr(c) not in ["\n", "\r"]
+unicodeSpaces = ''.join(
+    chr(c) for c in range(65536) if chr(c).isspace() and chr(c) not in ["\n", "\r"]
 )
 unicodePrintablesSpaces = unicodePrintables + unicodeSpaces
 

@@ -9,7 +9,7 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # (c) 2015 Valentin Samir
-import parser
+from . import parser
 import os
 
 
@@ -36,11 +36,11 @@ class MetaCommentable(object):
     def _get_meta(self, ident):
         s = []
         if self.meta_title:
-            s.append(u"%s#title: %s\n" % ("    " * ident, self.meta_title))
+            s.append("%s#title: %s\n" % ("    " * ident, self.meta_title))
         if self.meta_comment:
-            s.append(u"%s#comment: %s\n" % ("    " * ident, self.meta_comment))
+            s.append("%s#comment: %s\n" % ("    " * ident, self.meta_comment))
         if self.meta_custom:
-            s.append(u"%s#custom: %s\n" % ("    " * ident, self.meta_custom))
+            s.append("%s#custom: %s\n" % ("    " * ident, self.meta_custom))
         return "".join(s)
 
 
@@ -53,9 +53,9 @@ class Commentable(object):
 
     def _get_comment(self):
         if self.comment:
-            return u" %s" % self.comment.render()
+            return " %s" % self.comment.render()
         else:
-            return u""
+            return ""
 
 
 class Statement(BaseObject):
@@ -118,16 +118,16 @@ class Comment(Statement):
         return False
 
     def render(self, ident=0):
-        return u"%s# %s" % ("    " * ident, self.str)
+        return "%s# %s" % ("    " * ident, self.str)
 
     def is_comment(self):
         return True
 
     def gen_title(self):
         if len(self.str) > 24:
-            return u"# %s…" % self.str[:24]
+            return "# %s…" % self.str[:24]
         else:
-            return u"# %s" % self.str
+            return "# %s" % self.str
 
 
 class Assignment(Statement, Commentable, MetaCommentable):
@@ -166,7 +166,7 @@ class Assignment(Statement, Commentable, MetaCommentable):
                     variables.append('%s=%s' % (name, value))
             else:
                 variables.append(name)
-        return u"".join([
+        return "".join([
             self._get_meta(ident),
             "    " * ident,
             " ".join(variables),
@@ -177,11 +177,11 @@ class Assignment(Statement, Commentable, MetaCommentable):
         return True
 
     def gen_title(self):
-        susp = u""
+        susp = ""
         if len(self.variables) > 1:
-            susp = u"…"
+            susp = "…"
         if len(self.variables[0][0]) > 20:
-            susp = u"…"
+            susp = "…"
         title = 'Set %s' % (self.variables[0][0],)
         return "%s%s" % (title[:24], susp)
 
@@ -234,7 +234,7 @@ class Header(BaseObject, Commentable):
                 lockfile = ":%s" % self.lockfile
         else:
             lockfile = ""
-        return u"%s:%s%s%s%s" % (
+        return "%s:%s%s%s%s" % (
             "    " * ident, self.number, self.flag, lockfile, self._get_comment()
         )
 
@@ -417,7 +417,7 @@ class Condition(BaseObject, Commentable, Typed):
     _types = {}
 
     def render(self, ident=0):
-        return u"%s* %s%s" % ("    " * ident, self.pre_render(), self._get_comment())
+        return "%s* %s%s" % ("    " * ident, self.pre_render(), self._get_comment())
 
     def is_condition(self):
         return True
@@ -465,7 +465,7 @@ class ConditionEmpty(Condition):
         return False
 
     def pre_render(self):
-        return u""
+        return ""
 
     def is_empty(self):
         return True
@@ -487,7 +487,7 @@ class ConditionShell(Condition):
         return False
 
     def pre_render(self):
-        return u"? %s" % self.cmd
+        return "? %s" % self.cmd
 
     def is_shell(self):
         return True
@@ -510,7 +510,7 @@ class ConditionSize(Condition):
         return False
 
     def pre_render(self):
-        return u"%s %s" % (self.sign, self.size)
+        return "%s %s" % (self.sign, self.size)
 
     def is_size(self):
         return True
@@ -532,7 +532,7 @@ class ConditionRegex(Condition):
         return False
 
     def pre_render(self):
-        return u"%s" % self.regex
+        return "%s" % self.regex
 
     def is_regex(self):
         return True
@@ -559,7 +559,7 @@ class ConditionVariable(Condition):
         return False
 
     def pre_render(self):
-        return u"%s ?? %s" % (self.variable, self.condition.pre_render())
+        return "%s ?? %s" % (self.variable, self.condition.pre_render())
 
     def is_variable(self):
         return True
@@ -584,7 +584,7 @@ class ConditionNegate(Condition):
         return False
 
     def pre_render(self):
-        return u"! %s" % self.condition.pre_render()
+        return "! %s" % self.condition.pre_render()
 
     def is_negate(self):
         return True
@@ -619,7 +619,7 @@ class ConditionSubstitute(Condition):
         return False
 
     def pre_render(self):
-        return u"$ %s" % self.condition.pre_render()
+        return "$ %s" % self.condition.pre_render()
 
     def is_substitute(self):
         return True
@@ -659,7 +659,7 @@ class ConditionScore(Condition):
         return False
 
     def pre_render(self):
-        return u"%s ^ %s %s" % (self.x, self.y, self.condition.pre_render())
+        return "%s ^ %s %s" % (self.x, self.y, self.condition.pre_render())
 
     def is_score(self):
         return True
@@ -705,7 +705,7 @@ class ActionForward(Action, Commentable):
         return False
 
     def render(self, ident=0):
-        return u"%s! %s%s" % ("    " * ident, " ".join(self.recipients), self._get_comment())
+        return "%s! %s%s" % ("    " * ident, " ".join(self.recipients), self._get_comment())
 
     def is_forward(self):
         return True
@@ -741,7 +741,7 @@ class ActionShell(Action, Commentable):
             variable = "%s=" % self.variable
         else:
             variable = ""
-        return u"%s%s|%s%s" % ("    " * ident, variable, self.cmd, self._get_comment())
+        return "%s%s|%s%s" % ("    " * ident, variable, self.cmd, self._get_comment())
 
 
 @register_type
@@ -775,7 +775,7 @@ class ActionSave(Action, Commentable):
         return True
 
     def render(self, ident=0):
-        return u"%s%s%s" % ("    " * ident, self.path, self._get_comment())
+        return "%s%s%s" % ("    " * ident, self.path, self._get_comment())
 
 
 @register_type
@@ -794,7 +794,7 @@ class ActionNested(Action, list):
         return False
 
     def render(self, ident=0):
-        return u"%s{\n%s\n%s}\n" % (
+        return "%s{\n%s\n%s}\n" % (
             "    " * ident, "\n".join(s.render(ident+1) for s in self), "    " * ident
         )
 
@@ -941,7 +941,7 @@ class Recipe(Statement, MetaCommentable):
             s.append("\n")
         s.append(self.action.render(ident))
         s.append("\n")
-        return u"".join(s)
+        return "".join(s)
 
     def gen_title(self):
         return "Recipe %s" % self._recipe_id
@@ -1018,7 +1018,7 @@ class ProcmailRc(list):
         return ret
 
     def render(self):
-        return u"\n".join(s.render() for s in self)
+        return "\n".join(s.render() for s in self)
 
     def write(self, file, charset="utf-8"):
         data = self.render()
